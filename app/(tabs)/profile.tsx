@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import type { Session } from '@supabase/supabase-js';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  Alert,
+  AppState,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
   useColorScheme,
+  View
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { supabase } from '../lib/supabase';
 
-const LoginScreen = () => {
+const ProfileScreen = () => {
+  const [session, setSession] = useState<Session | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
-
-  const toggleForm = () => {
-    setIsLogin(!isLogin);
-    setError('');
-  };
+  const [loading, setLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
 
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
@@ -41,25 +43,85 @@ const LoginScreen = () => {
 
   const styles = getStyles(colors);
 
-  const handleSubmit = () => {
-    if (isLogin) {
-      if (email === '' || password === '') {
-        setError('Please enter both email and password.');
-      } else if (password !== '123456') {
-        setError('Wrong password');
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setUserEmail(data.session?.user?.email ?? '');
+    };
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUserEmail(session?.user?.email ?? '');
+    });
+
+    checkSession();
+
+    const appStateSub = AppState.addEventListener('change', (state) => {
+      state === 'active' ? supabase.auth.startAutoRefresh() : supabase.auth.stopAutoRefresh();
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+      appStateSub.remove();
+    };
+  }, []);
+
+  const toggleForm = () => {
+    setIsLogin(!isLogin);
+    setError('');
+  };
+
+  const handleSubmit = async () => {
+    setError('');
+    if (!email || !password || (!isLogin && !username)) {
+      setError('Please fill all fields.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        Alert.alert('Logged in!');
       } else {
-        setError('');
-        console.log('Logged in!');
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+
+        if (!data.session) {
+          Alert.alert('Please check your inbox for email verification!');
+        } else {
+          Alert.alert('Account created!');
+        }
       }
-    } else {
-      if (!username || !email || !password) {
-        setError('All fields are required.');
-      } else {
-        setError('');
-        console.log('Account created!');
-      }
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('Logout error', error.message);
     }
   };
+
+  if (session) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity onPress={handleLogout} style={{ marginTop: 8 }}>
+          <Text style={ [styles.tabText, { color: colors.text }] }>{'< LOGOUT'}</Text>
+        </TouchableOpacity>
+
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={[styles.tabText, { color: colors.text }]}>Sei loggato</Text>
+          <Text style={[styles.tabText, { color: colors.text }]}>Username: {username}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,6 +161,7 @@ const LoginScreen = () => {
             placeholderTextColor={colors.placeholder}
             value={email}
             onChangeText={setEmail}
+            autoCapitalize="none"
           />
 
           <Text style={[styles.label, { color: colors.label }]}>Password</Text>
@@ -110,13 +173,10 @@ const LoginScreen = () => {
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={setPassword}
+              autoCapitalize="none"
             />
             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-              <Ionicons
-                name={passwordVisible ? 'eye-off' : 'eye'}
-                size={20}
-                color={colors.placeholder}
-              />
+              <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={20} color={colors.placeholder} />
             </TouchableOpacity>
           </View>
 
@@ -128,9 +188,9 @@ const LoginScreen = () => {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity style={styles.continueButton} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.continueButton} onPress={handleSubmit} disabled={loading}>
             <Text style={styles.continueText}>
-              {isLogin ? 'Continue' : 'Create Account'}
+              {loading ? 'Please wait...' : isLogin ? 'Continue' : 'Create Account'}
             </Text>
           </TouchableOpacity>
 
@@ -142,7 +202,7 @@ const LoginScreen = () => {
 
           <View style={styles.signupContainer}>
             <Text style={{ color: colors.hintText }}>
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              {isLogin ? "Don't have an account? " : 'Already have an account? '}
             </Text>
             <TouchableOpacity onPress={toggleForm}>
               <Text style={styles.signupLink}>{isLogin ? 'Sign up' : 'Log in'}</Text>
@@ -154,7 +214,7 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default ProfileScreen;
 
 const getStyles = (colors: any) =>
   StyleSheet.create({
