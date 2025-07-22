@@ -1,13 +1,17 @@
 import type { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
-import { Alert, AppState, SafeAreaView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { Alert, AppState, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 import AuthForm from '../../components/AuthForm';
 import { supabase } from '../lib/supabase';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const ProfileScreen = () => {
   const [session, setSession] = useState<Session | null>(null);
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
+
+  const [userName, setUserName] = useState(null)
+  const [loading, setLoading ] = useState(true)
 
   const colors = {
     background: isDarkMode ? '#000' : '#fff',
@@ -36,6 +40,38 @@ const ProfileScreen = () => {
     };
   }, []);
 
+  const fetchUserData = async () => {
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser() // recupero utente loggato al momento || errore
+
+    if(userError || !user){ // basic throw di errore
+      console.error("Errore recupero utente")
+      setLoading(false)
+      return
+    }
+
+    const { data, error } = await supabase // funzione query sql
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .single()
+
+      if (error) {
+        console.error('Errore recuperando i dati utente:', error)
+      } else {
+        setUserName(data.username)
+      }
+
+      setLoading(false)
+
+  }
+
+  useEffect(() => {
+    fetchUserData()
+  }, []);
+
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -43,11 +79,25 @@ const ProfileScreen = () => {
     }
   };
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: colors.background }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    }
+    >
       {session ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: colors.text }}>You're logged in!</Text>
+          <Text style={{ color: colors.text }}>You're logged in {userName}!</Text>
           <TouchableOpacity onPress={handleLogout} style={{ marginTop: 16 }}>
             <Text style={{ color: colors.text }}>{'< LOGOUT'}</Text>
           </TouchableOpacity>
@@ -55,7 +105,7 @@ const ProfileScreen = () => {
       ) : (
         <AuthForm onLoginSuccess={() => {}} />
       )}
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
