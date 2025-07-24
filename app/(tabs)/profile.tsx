@@ -1,6 +1,6 @@
 import type { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
-import { Alert, AppState, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { Alert, AppState, Dimensions, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 import AuthForm from '../../components/AuthForm';
 import { supabase } from '../../helper/supabaseClient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -12,6 +12,8 @@ const ProfileScreen = () => {
 
   const [userName, setUserName] = useState(null)
   const [loading, setLoading ] = useState(true)
+
+  const centered = Dimensions.get('window').height/2-25
 
   const colors = {
     background: isDarkMode ? '#000' : '#fff',
@@ -96,7 +98,7 @@ const ProfileScreen = () => {
     }
     >
       {session ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: centered }}>
           <Text style={{ color: colors.text }}>You're logged in {userName}!</Text>
           <TouchableOpacity onPress={handleLogout} style={{ marginTop: 16 }}>
             <Text style={{ color: colors.text }}>{'< LOGOUT'}</Text>

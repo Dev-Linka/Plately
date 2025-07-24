@@ -1,4 +1,4 @@
-import { RefreshControl, Text, View } from 'react-native';
+import { Dimensions, RefreshControl, Text, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { supabase } from '../../helper/supabaseClient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 export default function HomeScreen() {
   const [userName, setUserName] = useState(null)
   const [loading, setLoading ] = useState(true)
+  const centered = Dimensions.get('window').height/2-25
   
   const fetchUserData = async () => {
     const {
@@ -56,6 +57,7 @@ export default function HomeScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        style={{ paddingTop: centered }}
       >
         <ThemedText>Welcome back {userName ? `, ${userName}` : ''}!</ThemedText>
       </ScrollView>
