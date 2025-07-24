@@ -1,6 +1,6 @@
 import { RefreshControl, Text, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../helper/supabaseClient';
 import { ScrollView } from 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 

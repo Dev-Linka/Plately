@@ -2,7 +2,7 @@ import type { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
 import { Alert, AppState, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 import AuthForm from '../../components/AuthForm';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../helper/supabaseClient';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const ProfileScreen = () => {
