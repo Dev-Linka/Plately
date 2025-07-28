@@ -110,5 +110,4 @@ const ProfileScreen = () => {
     </ScrollView>
   );
 };
-
 export default ProfileScreen;

@@ -9,7 +9,7 @@ import {
   StyleSheet,
   useColorScheme
 } from 'react-native';
-import { supabase } from '../app/lib/supabase';
+import { supabase } from '../helper/supabaseClient';
 
 interface Props {
   onLoginSuccess: () => void;
