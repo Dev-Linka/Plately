@@ -22,15 +22,15 @@ export default function TabTwoScreen() {
 
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ScrollView
+    <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         style={{ paddingTop: centered }}
       >
-        <ThemedText>Explore</ThemedText>
-      </ScrollView>
-    </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ThemedText>Explore</ThemedText>
+      </View>
+    </ScrollView>
   );
 }

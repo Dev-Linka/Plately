@@ -60,6 +60,7 @@ const AuthForm = ({ onLoginSuccess }: Props) => {
         if (error) throw error;
         onLoginSuccess();
         Alert.alert('Logged in!');
+        console.log("User logged in!");
       } else {
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
