@@ -1,93 +1,25 @@
 import { ThemedText } from '@/components/ThemedText';
-import type { Session } from '@supabase/supabase-js';
-import React, { useEffect, useState } from 'react';
-import { AppState, Dimensions, RefreshControl, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Dimensions, RefreshControl, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { supabase } from '../../helper/supabaseClient';
+import { useAuth } from '../../helper/common';
 
 export default function HomeScreen() {
-  const [userName, setUserName] = useState(null)
-  const [loading, setLoading ] = useState(true)
-  const centered = Dimensions.get('window').height/2-25
-  const [session, setSession] = useState<Session | null>(null);
-  
-  const fetchUserData = async () => {
-    const {
-      data: { user },
-      error: userError
-    } = await supabase.auth.getUser() // recupero utente loggato al momento || errore
+  const { session, userName, loading, refreshUserData } = useAuth();
+  const centered = Dimensions.get('window').height/2-25;
+  const [refreshing, setRefreshing] = useState(false);
 
-    if (userError) {
-      console.error("Errore recupero utente", userError);
-      setLoading(false);
-      return;
-    }
-    if (!user) {
-      // Nessun utente loggato, non è un errore
-      setLoading(false);
-      return;
-    }
-
-    const { data, error } = await supabase // funzione query sql
-      .from("profiles")
-      .select("username")
-      .eq("id", user.id)
-      .single()
-
-      if (error) {
-        console.error('Errore recuperando i dati utente:', error)
-      } else {
-        setUserName(data.username)
-      }
-
-      setLoading(false)
-
-  }
-
-  useEffect(() => {
-    if (session) {
-      fetchUserData();
-    } else {
-      setUserName(null); // reset username se non loggato
-      setLoading(false);
-    }
-  }, [session]);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-    };
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    checkSession();
-
-    const appStateSub = AppState.addEventListener('change', (state) => {
-      state === 'active' ? supabase.auth.startAutoRefresh() : supabase.auth.stopAutoRefresh();
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-      appStateSub.remove();
-    };
-  }, []);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     if (!session) {
       setRefreshing(false);
       return;
     }
   
     setRefreshing(true);
-    fetchUserData().finally(() => {
+    refreshUserData().finally(() => {
       setRefreshing(false);
     });
-  }, [session]);
+  }, [session, refreshUserData]);
   
   return (
     <ScrollView

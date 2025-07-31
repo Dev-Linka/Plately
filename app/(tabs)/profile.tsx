@@ -20,6 +20,48 @@ const ProfileScreen = () => {
     text: isDarkMode ? '#fff' : '#000',
   };
 
+  const fetchUserData = async () => {
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser() // recupero utente loggato al momento || errore
+
+    if (userError) {
+      console.error("Errore recupero utente", userError);
+      setLoading(false);
+      return;
+    }
+    if (!user) {
+      // Nessun utente loggato, non è un errore
+      setLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase // funzione query sql
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .single()
+
+      if (error) {
+        console.error('Errore recuperando i dati utente:', error)
+      } else {
+        setUserName(data.username)
+      }
+
+      setLoading(false)
+
+  }
+
+  useEffect(() => {
+    if (session) {
+      fetchUserData();
+    } else {
+      setUserName(null); // reset username se non loggato
+      setLoading(false);
+    }
+  }, [session]);
+
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -42,37 +84,19 @@ const ProfileScreen = () => {
     };
   }, []);
 
-  const fetchUserData = async () => {
-    const {
-      data: { user },
-      error: userError
-    } = await supabase.auth.getUser() // recupero utente loggato al momento || errore
+  const [refreshing, setRefreshing] = React.useState(false);
 
-    if(userError || !user){ // basic throw di errore
-      console.error("Errore recupero utente" + userError + " User: " + user)
-      setLoading(false)
-      return
+  const onRefresh = React.useCallback(() => {
+    if (!session) {
+      setRefreshing(false);
+      return;
     }
-
-    const { data, error } = await supabase // funzione query sql
-      .from("profiles")
-      .select("username")
-      .eq("id", user.id)
-      .single()
-
-      if (error) {
-        console.error('Errore recuperando i dati utente:', error)
-      } else {
-        setUserName(data.username)
-      }
-
-      setLoading(false)
-
-  }
-
-  useEffect(() => {
-    fetchUserData()
-  }, []);
+  
+    setRefreshing(true);
+    fetchUserData().finally(() => {
+      setRefreshing(false);
+    });
+  }, [session]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -81,14 +105,7 @@ const ProfileScreen = () => {
     }
   };
 
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
+  
 
   return (
     <ScrollView 
