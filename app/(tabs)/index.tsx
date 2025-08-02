@@ -13,6 +13,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const colors = useTheme();
   const router = useRouter();
+  
   const onRefresh = useCallback(() => {
     if (!session) {
       setRefreshing(false);
