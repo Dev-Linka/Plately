@@ -41,7 +41,7 @@ export default function HomeScreen() {
     />
   </TouchableOpacity>
 
-  <ThemedText style={getStyles(colors).titleText}>PLATELY</ThemedText>
+  <ThemedText style={getStyles(colors).titleText}> PLATELY </ThemedText>
 </View>
       <ScrollView
         refreshControl={
