@@ -26,7 +26,7 @@ const ProfileScreen = () => {
       error: userError
     } = await supabase.auth.getUser() // recupero utente loggato al momento || errore
 
-    if (userError) {
+    if (userError) { 
       console.error("Errore recupero utente", userError);
       setLoading(false);
       return;
