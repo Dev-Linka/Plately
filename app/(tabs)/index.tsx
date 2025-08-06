@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Dimensions, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Dimensions, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useAuth } from '../../helper/common';
 
@@ -58,6 +58,39 @@ export default function HomeScreen() {
               </ThemedText>
             </View>
             
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 20 }}
+              style={{ marginTop: 32 }}
+            >
+              <View style={getStyles(colors).cards}>
+                <TouchableOpacity 
+                  style={getStyles(colors).cardsButton}
+                  onPress={() => router.navigate('/(tabs)/profile')}
+                >
+                  <Text style={{color: 'brown'}}>CHANGE YOUR PROFILE</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <View style={getStyles(colors).cards}>
+                <TouchableOpacity style={getStyles(colors).cardsButton}>
+                  <Text style={{color: 'brown'}}>SPECIAL OFFER</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <View style={getStyles(colors).cards}>
+                <TouchableOpacity style={getStyles(colors).cardsButton}>
+                  <Text style={{color: 'brown'}}>NEW MENU</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <View style={getStyles(colors).cards}>
+                <TouchableOpacity style={getStyles(colors).cardsButton}>
+                  <Text style={{color: 'brown'}}>PROMOTIONS</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </View>
         ) : (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -104,9 +137,27 @@ const getStyles = (colors: any) =>
     titleText: {
       fontSize: 22,
       fontWeight: 'bold',
-      color: colors.text,
       fontFamily: 'geometric sans-serif typeface',
     },
+    cards: {
+      width: 340,
+      height: 400,
+      marginRight: 20,
+      justifyContent: 'flex-end', 
+      paddingLeft: 24,
+      backgroundColor: 'gray',
+      borderRadius: 20,
+      paddingBottom: 20,
+    },
+    cardsButton: {
+      backgroundColor: '#C4A484',
+      width: 292,
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 20,
+      color: 'white',
+    }
   });
 
 
