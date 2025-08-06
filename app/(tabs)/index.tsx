@@ -47,15 +47,17 @@ export default function HomeScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        style={{ paddingTop: centered }}
+        style={{ paddingTop: 128 }}
       >
         
         {session ? (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <View style={{ alignItems: 'flex-start', paddingTop: 0 }}>
+              <ThemedText style={{ fontSize: 28, fontFamily: 'geometric sans-serif typeface', paddingTop: 4, fontWeight: 600 }}>
+                Good morning{userName ? `, ${userName}` : ''}
+              </ThemedText>
+            </View>
             
-            <ThemedText>
-              Welcome back {userName ? `, ${userName}` : ''}!
-            </ThemedText>
           </View>
         ) : (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
