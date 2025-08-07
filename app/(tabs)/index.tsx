@@ -13,6 +13,14 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const colors = useTheme();
   const router = useRouter();
+
+  const palette = {
+    cream:      '#FFF7ED', // Card background
+    peach:      '#FFD6A5', // Card border/shadow
+    brown:      '#7C4700', // Title text, button text
+    taupe:      '#A67C52', // Description text
+    vividPeach: '#FFB86F', // Button background
+  };
   
   const onRefresh = useCallback(() => {
     if (!session) {
@@ -58,36 +66,44 @@ export default function HomeScreen() {
               </ThemedText>
             </View>
             
-            <ScrollView 
-              horizontal 
+            <ScrollView
+              horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 20 }}
               style={{ marginTop: 32 }}
+              snapToInterval={360}
+              decelerationRate="fast"
+              snapToAlignment="start"
             >
               <View style={getStyles(colors).cards}>
+                <Text style={{color: palette.brown, fontSize: 22, fontWeight: 'bold', marginBottom: 6}}>Profile Settings</Text>
+                <Text style={{color: '#A67C52', fontSize: 15, marginBottom: 18}}>Update your personal information and preferences.</Text>
                 <TouchableOpacity 
                   style={getStyles(colors).cardsButton}
                   onPress={() => router.navigate('/(tabs)/profile')}
                 >
-                  <Text style={{color: 'brown'}}>CHANGE YOUR PROFILE</Text>
+                  <Text style={{color: '#7C4700', fontSize: 18, fontWeight: 'bold', textAlign: 'center'}}>Go to Profile</Text>
                 </TouchableOpacity>
               </View>
-              
               <View style={getStyles(colors).cards}>
+                <Text style={{color: '#7C4700', fontSize: 22, fontWeight: 'bold', marginBottom: 6}}>Special Offer</Text>
+                <Text style={{color: '#A67C52', fontSize: 15, marginBottom: 18}}>Enjoy exclusive discounts available this week only!</Text>
                 <TouchableOpacity style={getStyles(colors).cardsButton}>
-                  <Text style={{color: 'brown'}}>SPECIAL OFFER</Text>
+                  <Text style={{color: '#7C4700', fontSize: 18, fontWeight: 'bold', textAlign: 'center'}}>View Offer</Text>
                 </TouchableOpacity>
               </View>
-              
               <View style={getStyles(colors).cards}>
+                <Text style={{color: '#7C4700', fontSize: 22, fontWeight: 'bold', marginBottom: 6}}>New Menu</Text>
+                <Text style={{color: '#A67C52', fontSize: 15, marginBottom: 18}}>Discover our latest delicious additions.</Text>
                 <TouchableOpacity style={getStyles(colors).cardsButton}>
-                  <Text style={{color: 'brown'}}>NEW MENU</Text>
+                  <Text style={{color: '#7C4700', fontSize: 18, fontWeight: 'bold', textAlign: 'center'}}>See Menu</Text>
                 </TouchableOpacity>
               </View>
-              
               <View style={getStyles(colors).cards}>
+                <Text style={{color: '#7C4700', fontSize: 22, fontWeight: 'bold', marginBottom: 6}}>Promotions</Text>
+                <Text style={{color: '#A67C52', fontSize: 15, marginBottom: 18}}>Check out current promotions and save more.</Text>
                 <TouchableOpacity style={getStyles(colors).cardsButton}>
-                  <Text style={{color: 'brown'}}>PROMOTIONS</Text>
+                  <Text style={{color: '#7C4700', fontSize: 18, fontWeight: 'bold', textAlign: 'center'}}>See Promotions</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -143,20 +159,32 @@ const getStyles = (colors: any) =>
       width: 340,
       height: 400,
       marginRight: 20,
-      justifyContent: 'flex-end', 
+      justifyContent: 'flex-end',
       paddingLeft: 24,
-      backgroundColor: 'gray',
+      backgroundColor: '#FFF7ED', // soft cream
       borderRadius: 20,
       paddingBottom: 20,
+      borderWidth: 2,
+      borderColor: '#FFD6A5', // peach
+      shadowColor: '#FFD6A5',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 4,
     },
     cardsButton: {
-      backgroundColor: '#C4A484',
+      backgroundColor: '#FFB86F',
       width: 292,
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 20,
-      color: 'white',
+      color: '#7C4700',
+      shadowColor: '#FFD6A5',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.18,
+      shadowRadius: 8,
+      elevation: 2,
     }
   });
 
