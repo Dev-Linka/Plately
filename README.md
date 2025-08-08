@@ -1,2 +1,2 @@
 #Swipe based plates app
-in progress..
+in progress.. 
