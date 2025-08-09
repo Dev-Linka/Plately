@@ -107,3 +107,14 @@ export const useAuth = () => {
     refreshUserData
   };
 };
+
+// Funzione per verificare se l'utente è autenticato
+export const isAuth = async (): Promise<boolean> => {
+  try {
+    const session = await checkSession();
+    return session !== null;
+  } catch (error) {
+    console.error('Errore durante il controllo dell\'autenticazione:', error);
+    return false;
+  }
+};

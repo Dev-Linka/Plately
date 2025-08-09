@@ -1,9 +1,9 @@
 import type { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
-import { Alert, AppState, Dimensions, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { Alert, AppState, Dimensions, RefreshControl, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import AuthForm from '../../components/AuthForm';
 import { supabase } from '../../helper/supabaseClient';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const ProfileScreen = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -124,6 +124,7 @@ const ProfileScreen = () => {
       ) : (
         <AuthForm onLoginSuccess={() => {}} />
       )}
+        
     </ScrollView>
   );
 };

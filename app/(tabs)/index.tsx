@@ -40,7 +40,7 @@ export default function HomeScreen() {
       <View style={getStyles(colors).headerContainer}>
   <TouchableOpacity
     style={getStyles(colors).profileButton}
-    onPress={() => router.navigate('/(tabs)/profile')}
+    onPress={() => router.navigate('//(profile')}
   >
     <Ionicons
       name="person-circle-outline"
@@ -80,7 +80,7 @@ export default function HomeScreen() {
                 <Text style={{color: '#A67C52', fontSize: 15, marginBottom: 18}}>Update your personal information and preferences.</Text>
                 <TouchableOpacity 
                   style={getStyles(colors).cardsButton}
-                  onPress={() => router.navigate('/(tabs)/profile')}
+                  onPress={() => router.navigate('//(profile')}
                 >
                   <Text style={{color: '#7C4700', fontSize: 18, fontWeight: 'bold', textAlign: 'center'}}>Go to Profile</Text>
                 </TouchableOpacity>
