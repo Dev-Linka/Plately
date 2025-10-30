@@ -2,12 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
   Alert,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  StyleSheet,
-  useColorScheme
+  useColorScheme,
+  View
 } from 'react-native';
 import { supabase } from '../helper/supabaseClient';
 
@@ -62,14 +62,18 @@ const AuthForm = ({ onLoginSuccess }: Props) => {
         Alert.alert('Logged in!');
         console.log("User logged in!");
       } else {
-        const { data, error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        if (!data.session) {
-          Alert.alert('Please check your inbox for email verification!');
-        } else {
-          Alert.alert('Account created!');
-          onLoginSuccess();
-        }
+        setLoading(true)
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+        })
+    
+        if (error) Alert.alert(error.message)
+        if (!session) onLoginSuccess()
+        setLoading(false)
       }
     } catch (err: any) {
       setError(err.message);

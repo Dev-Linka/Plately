@@ -6,7 +6,7 @@ import { supabase } from './supabaseClient';
 // Funzione per recuperare i dati dell'utente dal database
 export const fetchUserData = async (userId: string) => {
   const { data, error } = await supabase
-    .from("profiles")
+    .from("users")
     .select("username")
     .eq("id", userId)
     .single();

@@ -38,13 +38,13 @@ const ProfileScreen = () => {
     }
 
     const { data, error } = await supabase // funzione query sql
-      .from("profiles")
+      .from("users")
       .select("username")
       .eq("id", user.id)
       .single()
 
       if (error) {
-        console.error('Errore recuperando i dati utente:', error)
+        console.error('Errore recuperando i dati utente:', error, user.id)
       } else {
         setUserName(data.username)
       }
