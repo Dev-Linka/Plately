@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Dimensions, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useAuth } from '../../helper/common';
+import { useAuth } from '../../../helper/common';
 
 export default function HomeScreen() {
   const { session, userName, loading, refreshUserData } = useAuth();

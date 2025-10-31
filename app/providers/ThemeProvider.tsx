@@ -1,0 +1,58 @@
+import { themes } from "@/utils/color-theme";
+import { StatusBar } from "expo-status-bar";
+import { colorScheme } from "nativewind";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { View, useColorScheme } from "react-native";
+
+interface ThemeProviderProps {
+    children: React.ReactNode;
+}
+
+type ThemeContextType = {
+    theme: "light" | "dark";
+    toggleTheme: () => void;
+};
+
+export const ThemeContext = createContext<ThemeContextType>({
+    theme: "light",
+    toggleTheme: () => { },
+});
+
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+    const colorSchemephone = useColorScheme();
+    const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(colorSchemephone === "dark" ? "dark" : "light");
+
+    console.log('ThemeProvider - currentTheme:', currentTheme);
+
+    const toggleTheme = () => {
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        setCurrentTheme(newTheme);
+        colorScheme.set(newTheme);
+    };
+
+    useEffect(() => {
+        setCurrentTheme(colorSchemephone === "dark" ? "dark" : "light");
+    }, [colorSchemephone]);
+
+    return (
+        <ThemeContext.Provider value={{ theme: currentTheme, toggleTheme }}>
+            <StatusBar style={currentTheme === "dark" ? "light" : "dark"} />
+            <View style={themes[currentTheme]} className="flex-1">
+                {children}
+            </View>
+        </ThemeContext.Provider>
+    );
+};
+
+export const useTheme = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used within a ThemeProvider');
+    }
+    return context;
+}; 
+
+// Default export to satisfy Expo Router's route expectations when scanning under app
+export default function ThemeProviderRoute() {
+    return null;
+}

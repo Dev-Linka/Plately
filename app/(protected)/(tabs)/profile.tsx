@@ -2,13 +2,15 @@ import type { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
 import { Alert, AppState, Dimensions, RefreshControl, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import AuthForm from '../../components/AuthForm';
-import { supabase } from '../../helper/supabaseClient';
+import AuthForm from '../../../components/AuthForm';
+import { supabase } from '../../../helper/supabaseClient';
+import { Redirect, useRouter } from 'expo-router';
 
 const ProfileScreen = () => {
   const [session, setSession] = useState<Session | null>(null);
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
+  const router = useRouter();
 
   const [userName, setUserName] = useState(null)
   const [loading, setLoading ] = useState(true)
@@ -103,6 +105,7 @@ const ProfileScreen = () => {
     if (error) {
       Alert.alert('Logout error', error.message);
     }
+    router.replace('/(auth)/login')
   };
 
   
@@ -114,16 +117,14 @@ const ProfileScreen = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
     }
     >
-      {session ? (
+
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: centered }}>
           <Text style={{ color: colors.text }}>You're logged in {userName}!</Text>
           <TouchableOpacity onPress={handleLogout} style={{ marginTop: 16 }}>
             <Text style={{ color: colors.text }}>{'< LOGOUT'}</Text>
           </TouchableOpacity>
         </View>
-      ) : (
-        <AuthForm onLoginSuccess={() => {}} />
-      )}
+      
         
     </ScrollView>
   );
